@@ -6,6 +6,7 @@
 
   <groupId>com.itss</groupId>
   <artifactId>mavenpoc</artifactId>
+  <packaging>jar</packaging>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>mavenpoc</name>
