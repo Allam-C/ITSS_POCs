@@ -24,46 +24,43 @@ public class moduleWriter {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Properties prop = readPropertiesFile("mwxml.properties");
-		
 		Document doc = docBuilder.newDocument();
 		Element moduleRoot = doc.createElement("module");
 		moduleRoot.setAttribute("xmlns", "urn:jboss:module:1.0");
 		moduleRoot.setAttribute("name", "com.temenos.t24");
-		doc.appendChild(moduleRoot);
-		
 		Element resources = doc.createElement("resources");
 		Element resource;
-		moduleRoot.appendChild(resources);
 		
 		//Fetch core T24 libraries
-		File stdlibFolder = new File(prop.getProperty("stdlibPrefix"));
+		File stdlibFolder = new File(prop.getProperty("stdlibPath"));
 		File[] listOfStdLibFiles = stdlibFolder.listFiles();
-		
 		for (File file : listOfStdLibFiles) {
 			if (file.isFile()) {
 				resource = doc.createElement("resource-root");
 				resource.setAttribute("path", "./" + prop.getProperty("stdlibPrefix") + "/" + file.getName());
 				resources.appendChild(resource);
-
 			}
 		}
 		
 		//Fetch local development T24 libraries
-		File l3libFolder = new File(prop.getProperty("l3libPrefix"));
+		File l3libFolder = new File(prop.getProperty("l3libPath"));
 		File[] listOfL3LibFiles = l3libFolder.listFiles();
-		
 		for (File file : listOfL3LibFiles) {
 			if (file.isFile()) {
 				resource = doc.createElement("resource-root");
 				resource.setAttribute("path", "./" + prop.getProperty("l3libPrefix") + "/" + file.getName());
 				resources.appendChild(resource);
-
 			}
 		}
 
+		doc.appendChild(moduleRoot);
+		moduleRoot.appendChild(resources);
+		Element dependencies = doc.createElement("dependencies");
+		moduleRoot.appendChild(dependencies);
+		Element dpnModule = doc.createElement("module");
+		dpnModule.setAttribute("name", "com.temenos.tafj");
+		dependencies.appendChild(dpnModule);
 		
-		
-		moduleRoot.appendChild(doc.createElement("dependencies"));
 		
 		try (FileOutputStream output = new FileOutputStream(prop.getProperty("outputFilename"))) {
 			WriteXml(doc,output);
@@ -78,6 +75,7 @@ public class moduleWriter {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(output);
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		transformer.transform(source,result);
 	}
