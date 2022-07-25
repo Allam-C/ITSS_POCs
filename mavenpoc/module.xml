@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><module xmlns="urn:jboss:module:1.0" name="com.temenos.t24"><resources><resource-root path="./libs/stdlib/test1.txt"/><resource-root path="./libs/stdlib/test2.txt"/><resource-root path="./libs/stdlib/l3test1.txt"/><resource-root path="./libs/stdlib/l3test2.txt"/></resources><dependencies/></module>

@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,9 @@ import org.w3c.dom.Element;
 public class moduleWriter {
 
 	public static void main(String[] args) throws ParserConfigurationException, TransformerException,IOException {
+		Logger logger = LogManager.getLogger(moduleWriter.class);
+		logger.info("Generating module.xml file");
+		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Properties prop = readPropertiesFile("mwxml.properties");
@@ -31,26 +36,45 @@ public class moduleWriter {
 		Element resources = doc.createElement("resources");
 		Element resource;
 		
+		logger.debug("Reading properties from mwxml.properties");
+		
 		//Fetch core T24 libraries
-		File stdlibFolder = new File(prop.getProperty("stdlibPath"));
+		String libPath = prop.getProperty("stdlibPath");
+		File stdlibFolder = new File(libPath);
+		logger.debug("Fetching core T24 libraries from: " + libPath);
 		File[] listOfStdLibFiles = stdlibFolder.listFiles();
-		for (File file : listOfStdLibFiles) {
-			if (file.isFile()) {
-				resource = doc.createElement("resource-root");
-				resource.setAttribute("path", "./" + prop.getProperty("stdlibPrefix") + "/" + file.getName());
-				resources.appendChild(resource);
+		try {
+			logger.debug("Files found: " + listOfStdLibFiles.length);
+			for (File file : listOfStdLibFiles) {
+				if (file.isFile()) {
+					resource = doc.createElement("resource-root");
+					resource.setAttribute("path", "./" + prop.getProperty("stdlibPrefix") + "/" + file.getName());
+					resources.appendChild(resource);
+				}
 			}
+		}
+		catch (NullPointerException e1) {
+			logger.error("Could not obtain Core T24 libraries");
+			logger.debug("Files found: 0");
 		}
 		
 		//Fetch local development T24 libraries
-		File l3libFolder = new File(prop.getProperty("l3libPath"));
+		libPath = prop.getProperty("l3libPath");
+		File l3libFolder = new File(libPath);
+		logger.debug("Fetching l3 T24 libraries from: " + libPath);
 		File[] listOfL3LibFiles = l3libFolder.listFiles();
-		for (File file : listOfL3LibFiles) {
-			if (file.isFile()) {
-				resource = doc.createElement("resource-root");
-				resource.setAttribute("path", "./" + prop.getProperty("l3libPrefix") + "/" + file.getName());
-				resources.appendChild(resource);
+		try {
+			logger.debug("Files found: " + listOfL3LibFiles.length);
+			for (File file : listOfL3LibFiles) {
+				if (file.isFile()) {
+					resource = doc.createElement("resource-root");
+					resource.setAttribute("path", "./" + prop.getProperty("l3libPrefix") + "/" + file.getName());
+					resources.appendChild(resource);
+				}
 			}
+		} catch (NullPointerException e2) {
+			logger.error("Could not obtain l3 T24 libraries");
+			logger.debug("Files found: 0");
 		}
 
 		doc.appendChild(moduleRoot);
@@ -61,9 +85,10 @@ public class moduleWriter {
 		dpnModule.setAttribute("name", "com.temenos.tafj");
 		dependencies.appendChild(dpnModule);
 		
-		
-		try (FileOutputStream output = new FileOutputStream(prop.getProperty("outputFilename"))) {
+		String outputFilename = prop.getProperty("outputFilename");
+		try (FileOutputStream output = new FileOutputStream(outputFilename)) {
 			WriteXml(doc,output);
+			logger.debug("File " + outputFilename + " generated successfully...");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
