@@ -33,8 +33,8 @@ public class DsfDeploy {
 		Timestamp ts = new Timestamp(date.getTime());
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
-		//Properties prop = readPropertiesFile("src/main/resources/dsfDeploy.properties");
-		Properties prop = readPropertiesFile("dsfDeploy.properties");
+		Properties prop = new Properties();
+		prop.load(DsfDeploy.class.getClassLoader().getResourceAsStream("dsfDeploy.properties"));
 		
 		// Retrieving path for DSF packages
 		String basePath = prop.getProperty("com.itss.dsf.package.path");
@@ -102,21 +102,4 @@ public class DsfDeploy {
 			return 503;
 		}
 	}
-
-	private static Properties readPropertiesFile(String fileName) throws IOException {
-		FileInputStream fis = null;
-		Properties prop = null;
-		try {
-		   fis = new FileInputStream(fileName);
-		   prop = new Properties();
-		   prop.load(fis);
-		} catch(FileNotFoundException fnfe) {
-		   fnfe.printStackTrace();
-		} catch(IOException ioe) {
-		   ioe.printStackTrace();
-		} finally {
-		   fis.close();
-		}
-		return prop;
-	}	
 }
