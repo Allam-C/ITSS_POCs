@@ -47,7 +47,7 @@ public class ModuleWriter {
 		logger.debug("Fetching core T24 libraries from: " + libPath);
 		File[] listOfStdLibFiles = stdlibFolder.listFiles();
 		try {
-			logger.debug("Files found: " + listOfStdLibFiles.length);
+			logger.debug("Libraries found: " + listOfStdLibFiles.length);
 			for (File file : listOfStdLibFiles) {
 				if (file.isFile()) {
 					resource = doc.createElement("resource-root");
@@ -58,7 +58,7 @@ public class ModuleWriter {
 		}
 		catch (NullPointerException e1) {
 			logger.error("Could not obtain Core T24 libraries");
-			logger.debug("Files found: 0");
+			logger.debug("Libraries found: 0");
 		}
 		
 		//Fetch local development T24 libraries
@@ -67,7 +67,7 @@ public class ModuleWriter {
 		logger.debug("Fetching l3 T24 libraries from: " + libPath);
 		File[] listOfL3LibFiles = l3libFolder.listFiles();
 		try {
-			logger.debug("Files found: " + listOfL3LibFiles.length);
+			logger.debug("Libraries found: " + listOfL3LibFiles.length);
 			for (File file : listOfL3LibFiles) {
 				if (file.isFile()) {
 					resource = doc.createElement("resource-root");
@@ -77,7 +77,7 @@ public class ModuleWriter {
 			}
 		} catch (NullPointerException e2) {
 			logger.error("Could not obtain l3 T24 libraries");
-			logger.debug("Files found: 0");
+			logger.debug("Libraries found: 0");
 		}
 
 		doc.appendChild(moduleRoot);
