@@ -1,8 +1,6 @@
 package com.itss.dsf_deploy;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,7 +75,12 @@ public class DsfDeploy {
 				for (File file : listOfPackages ) {
 					logger.info("Deploying package: " + file.getName() + " (" + ++packageCount + " of " + packagesFound + ")");
 					errorCode = sendPackage(dsfUrl,file);
-					logger.info("Package result: " + errorCode);
+					if (errorCode == 200) {
+						logger.info("Package result: " + errorCode);
+					}
+					else {
+						logger.error("Package result: " + errorCode);
+					}
 					Files.move(Paths.get(file.getAbsolutePath()), Paths.get(processPath + "\\" + file.getName()));
 				}
 			}
@@ -85,7 +88,7 @@ public class DsfDeploy {
 				e.printStackTrace();
 			}
 		} else {
-			logger.info("No packages found!");
+			logger.error("No packages found!");
 		}
 	}
 	
