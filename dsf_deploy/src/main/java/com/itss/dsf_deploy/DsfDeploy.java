@@ -48,6 +48,10 @@ public class DsfDeploy {
 		
 		//Retrieving zip files from package directory
 		File dsfPackageFolder = new File(basePath);
+		if (!dsfPackageFolder.exists()) {
+			logger.error("Folder " + basePath + " not found");
+			return;
+		}
 		FilenameFilter zipFilter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				String lowercaseName = name.toLowerCase();
@@ -76,7 +80,7 @@ public class DsfDeploy {
 					logger.info("Deploying package: " + file.getName() + " (" + ++packageCount + " of " + packagesFound + ")");
 					errorCode = sendPackage(dsfUrl,file);
 					if (errorCode == 200) {
-						logger.info("Package result: " + errorCode);
+						logger.info("Package result: " + errorCode + " OK");
 					}
 					else {
 						logger.error("Package result: " + errorCode);
